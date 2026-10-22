@@ -16,12 +16,6 @@ struct MidiPortView
     bool connected = false;
 };
 
-struct MidiRouterStats
-{
-    std::uint64_t messagesReceived = 0;
-    std::uint64_t messagesSent = 0;
-};
-
 class MidiRouter
 {
 public:
@@ -42,7 +36,6 @@ public:
 
     [[nodiscard]] std::vector<MidiPortView> inputPorts() const;
     [[nodiscard]] std::vector<MidiPortView> outputPorts() const;
-    [[nodiscard]] MidiRouterStats stats() const;
     [[nodiscard]] std::vector<std::string> recentLogLines() const;
 
 private:
@@ -84,9 +77,6 @@ private:
     mutable std::mutex stateMutex_;
     std::vector<InputPort> inputs_;
     std::vector<OutputPort> outputs_;
-
-    std::atomic<std::uint64_t> messagesReceived_ { 0 };
-    std::atomic<std::uint64_t> messagesSent_ { 0 };
 
     mutable std::mutex logMutex_;
     std::deque<std::string> logLines_;

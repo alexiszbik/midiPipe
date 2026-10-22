@@ -76,7 +76,7 @@ void ConsoleUi::drawPortColumn(int x, int width, int y, int height, const char* 
     attroff(COLOR_PAIR(kHeader));
 
     mvvline(y, x, ACS_VLINE, height);
-    mvvline(y, x + width - 1, ACS_VLINE, height);
+    //mvvline(y, x + width - 1, ACS_VLINE, height);
     mvhline(y + height - 1, x, ACS_HLINE, width);
 
     const int listY = y + 2;
@@ -162,7 +162,7 @@ void ConsoleUi::draw()
 
     const int headerRows = 2;
     const int statusRows = 2;
-    const int logRows = std::max(3, rows / 5);
+    const int logRows = std::max(5, rows / 4);
     const int portRows = rows - headerRows - statusRows - logRows;
 
     attron(COLOR_PAIR(kHeader) | A_BOLD);
@@ -188,14 +188,10 @@ void ConsoleUi::draw()
     drawLogArea(logY, logRows, cols);
 
     const int statusY = logY + logRows;
-    const auto stats = router_.stats();
-
     attron(COLOR_PAIR(kStatusBar));
     mvhline(statusY, 0, ' ', cols);
     mvprintw(statusY, 0,
-             " In: %-8llu  Out: %-8llu  |  q quit  r refresh  (+/-) poll interval ",
-             static_cast<unsigned long long>(stats.messagesReceived),
-             static_cast<unsigned long long>(stats.messagesSent));
+             "q quit  r refresh");
     attroff(COLOR_PAIR(kStatusBar));
 
 

@@ -179,14 +179,6 @@ std::vector<MidiPortView> MidiRouter::outputPorts() const
     return ports;
 }
 
-MidiRouterStats MidiRouter::stats() const
-{
-    MidiRouterStats stats;
-    stats.messagesReceived = messagesReceived_.load();
-    stats.messagesSent = messagesSent_.load();
-    return stats;
-}
-
 std::vector<std::string> MidiRouter::recentLogLines() const
 {
     std::lock_guard<std::mutex> lock(logMutex_);
@@ -377,10 +369,9 @@ void MidiRouter::midiCallback(double /*timeStamp*/,
 
 void MidiRouter::handleIncomingMessage(const std::vector<unsigned char>& message)
 {
-    if (message.empty())
+    if (message.empty()) {
         return;
-
-    messagesReceived_.fetch_add(1);
+    }
 
     std::vector<RtMidiOut*> outputs;
     {
@@ -388,8 +379,9 @@ void MidiRouter::handleIncomingMessage(const std::vector<unsigned char>& message
         outputs.reserve(outputs_.size());
         for (const auto& output : outputs_)
         {
-            if (output.midiOut && output.midiOut->isPortOpen())
+            if (output.midiOut && output.midiOut->isPortOpen()) {
                 outputs.push_back(output.midiOut.get());
+            }
         }
     }
 
@@ -398,7 +390,6 @@ void MidiRouter::handleIncomingMessage(const std::vector<unsigned char>& message
         try
         {
             midiOut->sendMessage(&message);
-            messagesSent_.fetch_add(1);
         }
         catch (const RtMidiError& error)
         {
